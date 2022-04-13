@@ -1,10 +1,12 @@
+// Basic auction contract.
 // taken from https://github.com/PatrickAlphaC/smartcontract-lottery/blob/main/contracts/Lottery.sol on 2022-04-13
+
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.6.6;
 
-import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol";
+import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol"; // for ETH-USD pricefeed
+import "@openzeppelin/contracts/access/Ownable.sol"; // for the "owner" property
+import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol"; // For RNG. VRF: verifiable random function
 
 contract Lottery is VRFConsumerBase, Ownable {
     address payable[] public players;
@@ -33,6 +35,9 @@ contract Lottery is VRFConsumerBase, Ownable {
         uint256 _fee,
         bytes32 _keyhash
     ) public VRFConsumerBase(_vrfCoordinator, _link) {
+        // record initialized instance properties
+        // whoever calls it gets set as owner (part of Ownable)
+
         usdEntryFee = 50 * (10**18);
         ethUsdPriceFeed = AggregatorV3Interface(_priceFeedAddress);
         lottery_state = LOTTERY_STATE.CLOSED;
@@ -41,6 +46,8 @@ contract Lottery is VRFConsumerBase, Ownable {
     }
 
     function enter() public payable {
+        // add message sender to players
+
         // $50 minimum
         require(lottery_state == LOTTERY_STATE.OPEN);
         require(msg.value >= getEntranceFee(), "Not enough ETH!");
@@ -48,6 +55,9 @@ contract Lottery is VRFConsumerBase, Ownable {
     }
 
     function getEntranceFee() public view returns (uint256) {
+        // return entrance fee in ETH (i think)
+        // anyone can call
+
         (, int256 price, , , ) = ethUsdPriceFeed.latestRoundData();
         uint256 adjustedPrice = uint256(price) * 10**10; // 18 decimals
         // $50, $2,000 / ETH
@@ -58,6 +68,9 @@ contract Lottery is VRFConsumerBase, Ownable {
     }
 
     function startLottery() public onlyOwner {
+        // start the lottery, unless it's closed
+        // only owner can call
+
         require(
             lottery_state == LOTTERY_STATE.CLOSED,
             "Can't start a new lottery yet!"
@@ -66,6 +79,9 @@ contract Lottery is VRFConsumerBase, Ownable {
     }
 
     function endLottery() public onlyOwner {
+        // end lottery and trigger transfer
+        // only owner can call
+
         // uint256(
         //     keccack256(
         //         abi.encodePacked(
@@ -85,6 +101,8 @@ contract Lottery is VRFConsumerBase, Ownable {
         internal
         override
     {
+        // choose and pay winner, close auction
+        // callback for RequestedRandomness event. Part of VRFConsumerBase.
         require(
             lottery_state == LOTTERY_STATE.CALCULATING_WINNER,
             "You aren't there yet!"
