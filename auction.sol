@@ -13,7 +13,7 @@ contract Lottery is VRFConsumerBase, Ownable {
     address payable public recentWinner; // most recent winner (wallet id)
     uint256 public randomness; // random number
     uint256 public usdEntryFee; // entry fee in USD
-    AggregatorV3Interface internal ethUsdPriceFeed; // 
+    AggregatorV3Interface internal ethUsdPriceFeed; // ETH Price Feed 
     enum LOTTERY_STATE {
         OPEN,
         CLOSED,
