@@ -1,5 +1,7 @@
 // Basic auction contract.
-// taken from https://github.com/PatrickAlphaC/smartcontract-lottery/blob/main/contracts/Lottery.sol on 2022-04-13
+
+// From https://github.com/PatrickAlphaC/smartcontract-lottery/blob/main/contracts/Lottery.sol
+// Accessed 2022-04-13
 
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.6.6;
