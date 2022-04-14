@@ -26,10 +26,6 @@ contract Lottery is VRFConsumerBase, Ownable {
     bytes32 public keyhash; // key hash
     event RequestedRandomness(bytes32 requestId); // event definition for requesting randomness
 
-    // 0
-    // 1
-    // 2
-
     constructor(
         address _priceFeedAddress,
         address _vrfCoordinator,
