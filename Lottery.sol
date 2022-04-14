@@ -1,4 +1,4 @@
-// Basic auction contract.
+// Basic lottery contract.
 
 // From https://github.com/PatrickAlphaC/smartcontract-lottery/blob/main/contracts/Lottery.sol
 // Accessed 2022-04-13
